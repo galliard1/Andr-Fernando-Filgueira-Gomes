@@ -7,6 +7,8 @@ SCREEN_HEIGHT = 600
 SCREEN_WIDTH = 1100
 FPS = 30
 IMG_DIR = os.path.join(os.path.dirname(__file__), "..", "assets")
+FONT_STYLE = os.path.join(IMG_DIR,'Fonts/one piece font.ttf')
+
 
 # Assets Constants
 ICON = pygame.image.load(os.path.join(IMG_DIR, "DinoWallpaper.png"))
@@ -70,3 +72,19 @@ BG = pygame.image.load(os.path.join(IMG_DIR, 'Other/Track.png'))
 HEART = pygame.image.load(os.path.join(IMG_DIR, 'Other/SmallHeart.png'))
 
 DEFAULT_TYPE = "default"
+SHIELD_TYPE = 'Shield'
+
+WARRIOR_RUN = [
+    pygame.image.load(os.path.join(IMG_DIR, 'Warrior/Run-1.png.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Warrior/Run-2.png.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Warrior/Run-3.png.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Warrior/Run-4.png.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Warrior/Run-5.png.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Warrior/Run-6.png.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Warrior/Run-7.png.png')),
+]
+
+WARRIOR_SLIDE = [
+    pygame.image.load(os.path.join(IMG_DIR, 'Warrior/Slide-1.png.png')),
+    pygame.image.load(os.path.join(IMG_DIR, 'Warrior/Slide-2.png.png'))
+]

@@ -1,11 +1,11 @@
 import pygame
 
-from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS
+from dino_runner.utils.constants import BG, ICON, SCREEN_HEIGHT, SCREEN_WIDTH, TITLE, FPS,FONT_STYLE,DEFAULT_TYPE
 from dino_runner.components.dinosaur import Dinosaur
 from dino_runner.components.clouds import Cloud
 from dino_runner.components.obstacles.obstacle_manager import ObstacleManager
+from dino_runner.components.power_ups.power_up_manager import PowerUpManager
 
-FONT_STYLE = 'freesansbold.ttf'
 
 class Game:
     def __init__(self):
@@ -25,6 +25,7 @@ class Game:
         self.player = Dinosaur()
         self.cloud = Cloud()
         self.obstacle_manager = ObstacleManager()
+        self.power_up_manager = PowerUpManager()
 
     def execute(self):
         self.running = True
@@ -40,6 +41,7 @@ class Game:
         self.score = 0
         self.playing = True
         self.obstacle_manager.reset_obstacles()
+        self.power_up_manager.reset_power_ups()
         while self.playing:
             self.events()
             self.update()
@@ -56,6 +58,7 @@ class Game:
         self.cloud.update()
         self.obstacle_manager.update(self)
         self.update_score()
+        self.power_up_manager.update(self)
     
     def update_score(self):
         self.score += 1
@@ -70,6 +73,8 @@ class Game:
         self.player.draw(self.screen)
         self.cloud.draw(self.screen)
         self.obstacle_manager.draw(self.screen)
+        self.power_up_manager.draw(self.screen)
+        self.draw_power_up_time()
         pygame.display.update()
         pygame.display.flip()
 
@@ -83,7 +88,23 @@ class Game:
         self.x_pos_bg -= self.game_speed
     
     def draw_score(self):
-        self.draw_text(f'Score: {self.score}', (1000,50))
+        self.draw_text(f'SCORE: {self.score}', (1000,50))
+    
+    def draw_power_up_time(self):
+        if self.player.has_power_up:
+            time_to_show = round((self.player.power_up_time - pygame.time.get_ticks()) / 1000, 2)
+            if time_to_show >= 0:
+                self.draw_text(f'{self.player.type.capitalize()} ENABLED FOR {time_to_show} SECONDS',(500,50))
+            else:
+                self.player.has_power_up = False
+                self.player.type = DEFAULT_TYPE
+
+    def draw_text(self,text,text_rect,font_size=25):
+        font = pygame.font.Font(FONT_STYLE, font_size)
+        self.text = font.render(f'{text}', True, (0, 0, 0))
+        self.text_rect = self.text.get_rect()
+        self.text_rect.center = text_rect
+        self.screen.blit(self.text, self.text_rect)
 
     def handle_events_on_menu(self):
         for event in pygame.event.get():
@@ -99,23 +120,17 @@ class Game:
         half_screen_width = SCREEN_WIDTH // 2
 
         if self.death_count == 0:
-            self.draw_text('Press any key to start',(half_screen_width,half_screen_height))
+            self.draw_text('PRESS ANY KEY TO START',(half_screen_width,half_screen_height))
            
         else:
             self.screen.blit(ICON, (half_screen_width-50,half_screen_height-140))
-            self.draw_text('Press any key to restart', (half_screen_width,half_screen_height))
-            self.draw_text(f'Your score was: {self.score}',(half_screen_width,half_screen_height+50))
-            self.draw_text(f'Your death count is: {self.death_count}',(half_screen_width,half_screen_height+100))
+            self.draw_text('PRESS ANY KEY TO RESTART', (half_screen_width,half_screen_height))
+            self.draw_text(f'YOUR SCORE WAS: {self.score}',(half_screen_width,half_screen_height+50))
+            self.draw_text(f'YOUR DEATH COUNT IS: {self.death_count}',(half_screen_width,half_screen_height+100))
             self.game_speed = 20
 
         pygame.display.update()
 
         self.handle_events_on_menu()
     
-    def draw_text(self,text,text_rect):
-        font = pygame.font.Font(FONT_STYLE, 22)
-        self.text = font.render(f'{text}', True, (0, 0, 0))
-        self.text_rect = self.text.get_rect()
-        self.text_rect.center = text_rect
-        self.screen.blit(self.text, self.text_rect)
 
