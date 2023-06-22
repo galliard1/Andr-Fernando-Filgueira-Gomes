@@ -3,7 +3,7 @@ import random
 
 from dino_runner.components.obstacles.cactus import SmallCactus, LargeCactus
 from dino_runner.components.obstacles.bird import Bird
-from dino_runner.utils.constants import SMALL_CACTUS, LARGE_CACTUS,BIRD
+from dino_runner.utils.constants import SMALL_CACTUS,DEFAULT_TYPE,YOU_DIED_SOUND,SWORD_SOUND, LARGE_CACTUS,BIRD, SHIELD_TYPE, SWORD_TYPE,MAGIC_SCROLL_TYPE
 
 
 class ObstacleManager():
@@ -21,14 +21,21 @@ class ObstacleManager():
 
         for obstacle in self.obstacles:
             obstacle.update(game.game_speed, self.obstacles)
-            if game.player.dino_rect.colliderect(obstacle.rect):
-                if not game.player.has_power_up:
+            if game.player.mask.overlap(obstacle.mask,
+                (obstacle.rect.x - game.player.warrior_rect.x, 
+                 obstacle.rect.y - game.player.warrior_rect.y)):
+                if not game.player.has_power_up or game.player.type == MAGIC_SCROLL_TYPE:
                     pygame.time.delay(500)
+                    game.player.has_power_up = False
                     game.playing = False
                     game.death_count += 1
+                    YOU_DIED_SOUND.set_volume(0.5)
+                    YOU_DIED_SOUND.play()
                     break
-                else:
+                elif game.player.type == SWORD_TYPE:
+                    SWORD_SOUND.play()
                     self.obstacles.remove(obstacle)
+
 
     def reset_obstacles(self):
         self.obstacles = []

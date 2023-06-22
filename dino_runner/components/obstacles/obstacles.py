@@ -9,6 +9,7 @@ class Obstacle(Sprite):
         self.image = image 
         self.rect = self.image[self.type].get_rect() 
         self.rect.x = SCREEN_WIDTH   
+        self.mask = pygame.mask.from_surface(self.image[0])
 
     def update(self, game_speed, obstacles):
         self.rect.x -= game_speed

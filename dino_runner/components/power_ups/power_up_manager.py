@@ -2,6 +2,10 @@ import random
 import pygame
 
 from dino_runner.components.power_ups.shield import Shield
+from dino_runner.components.power_ups.sword import Sword
+from dino_runner.components.power_ups.magic_scroll import MagicScroll
+
+POWERS = [Sword,Shield,MagicScroll]
 
 
 class PowerUpManager:
@@ -12,13 +16,15 @@ class PowerUpManager:
     def generate_power_up(self, score):
         if len(self.power_ups) == 0 and self.when_appears == score:
             self.when_appears += random.randint(200, 300)
-            self.power_ups.append(Shield())
+            self.power_ups.append(random.choice(POWERS)())
 
     def update(self, game):
         self.generate_power_up(game.score)
         for power_up in self.power_ups:
             power_up.update(game.game_speed, self.power_ups)
-            if game.player.dino_rect.colliderect(power_up.rect):
+            if game.player.mask.overlap(power_up.mask,
+                (power_up.rect.x - game.player.warrior_rect.x, 
+                power_up.rect.y - game.player.warrior_rect.y)):
                 power_up.start_time = pygame.time.get_ticks()
                 game.player.has_power_up = True
                 game.player.type = power_up.type
@@ -32,3 +38,4 @@ class PowerUpManager:
     def reset_power_ups(self):
         self.power_ups = []
         self.when_appears = random.randint(200, 300)
+        
